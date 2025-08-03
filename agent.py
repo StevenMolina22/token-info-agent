@@ -103,7 +103,15 @@ def extract_symbol(message: str) -> str | None:
 
 def run(env: Environment):
     user_msg = env.get_last_message()["content"]
-    token_name = extract_symbol(user_msg)
+
+    extraction_prompt = f"""
+    From the following user message, what is the cryptocurrency they are asking about?
+    Respond with ONLY the name. For example: 'bitcoin', 'ethereum', 'solana', 'tether', 'near'.
+
+    User message: "{user_msg}"
+    """
+    llm_response = env.completion([{"role": "user", "content": extraction_prompt}])
+    token_name = llm_response.strip().lower()
 
     if token_name:
         price = get_price(token_name)
