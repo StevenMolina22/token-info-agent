@@ -1,5 +1,5 @@
 from nearai.agents.environment import Environment
-from coingecko import get_price
+# from coingecko import get_price
 
 SYSTEM_PROMPT = """
 # Token Info Agent System Prompt
@@ -85,33 +85,8 @@ Your goal is to be a simple, reliable tool for getting real-time cryptocurrency 
 def run(env: Environment):
     user_msg = env.get_last_message()["content"]
 
-    relevant_msg_prompt = f"""
-    Identify if the user is asking about the price of any token. Respond with 'Yes' if the user is asking about the price. If not, respond with a message telling him that you are here to help him with the price of tokens.
-    User message: "{user_msg}"
-    """
-    response = env.completion([{"role": "user", "content": relevant_msg_prompt}])
-    if response.strip().lower() != "yes":
-        env.add_reply(response)
-        return
-
-    extraction_prompt = f"""
-    From the following user message, what is the cryptocurrency they are asking about?
-    Respond with ONLY the name. For example: 'bitcoin', 'ethereum', 'solana', 'tether', 'near'.
-
-    User message: "{user_msg}"
-    """
-    response = env.completion([{"role": "user", "content": extraction_prompt}])
-    token_name = response.strip().lower()
-
-    if token_name:
-        price = get_price(token_name)
-        if price is not None:
-            reply = f"{token_name.capitalize()} Current Price: ${price:.2f}"
-            env.add_reply(reply)
-        else:
-            env.add_reply(f"Sorry, I couldn't fetch the price for {token_name} right now.")
-    else:
-        env.add_reply("Sorry, I don't recognize that token.")
+    response = env.completion([{"role": "user", "content": SYSTEM_PROMPT + f"\nUser message: {user_msg}"}])
+    env.add_reply(response)
 
 run(env)
 
