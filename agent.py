@@ -104,14 +104,23 @@ def extract_symbol(message: str) -> str | None:
 def run(env: Environment):
     user_msg = env.get_last_message()["content"]
 
+    relevant_msg_prompt = f"""
+    Identify if the user is asking about the price of any token. Respond with 'Yes' if the user is asking about the price. If not, respond with a message telling him that you are here to help him with the price of tokens.
+    user_message = {user_msg}
+    """
+    response = env.completion([{"role": "user", "content": relevant_msg_prompt}])
+    if response.strip().lower() != "yes":
+        env.add_reply(response)
+        return
+
     extraction_prompt = f"""
     From the following user message, what is the cryptocurrency they are asking about?
     Respond with ONLY the name. For example: 'bitcoin', 'ethereum', 'solana', 'tether', 'near'.
 
     User message: "{user_msg}"
     """
-    llm_response = env.completion([{"role": "user", "content": extraction_prompt}])
-    token_name = llm_response.strip().lower()
+    response = env.completion([{"role": "user", "content": extraction_prompt}])
+    token_name = response.strip().lower()
 
     if token_name:
         price = get_price(token_name)
