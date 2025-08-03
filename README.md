@@ -4,9 +4,15 @@ Title: Make a Token Info Agent | NEARN
 URL Source: http://nearn.io/thebafnetwork/2/
 
 
-This bounty is part of our effort to highlight what’s possible with Shade Agents, autonomous, chain-abstracted AI agents built on NEAR using Chain Signatures. These agents can read, reason, and act across ecosystems without centralized control.
+This bounty is part of our effort to highlight what's possible with Shade Agents, autonomous, chain-abstracted AI agents built on NEAR using Chain Signatures. These agents can read, reason, and act across ecosystems without centralized control.
 
-Your task is to build a functional Token Info Agent that can fetch and return real-time token price data based on user queries. Just as important, and staying true to our commitment to open-source documentation, you’ll create a clear, beginner-friendly tutorial that anyone can follow.
+Your task is to build a functional Token Info Agent that can fetch and return real-time token price data based on user queries. Just as important, and staying true to our commitment to open-source documentation, you'll create a clear, beginner-friendly tutorial that anyone can follow.
+
+## Quick Start
+
+**Installation:** `uv pip install -r requirements.txt` (only `requests`)
+
+**Usage example:** 'What's the price of SOL?'
 
 ### What You’ll Build
 

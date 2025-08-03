@@ -1,4 +1,6 @@
+import re
 from nearai.agents.environment import Environment
+from coingecko import get_price, SYMBOL_TO_ID, SYMBOL_TO_NAME
 
 SYSTEM_PROMPT = """
 # Token Info Agent System Prompt
@@ -80,8 +82,46 @@ If implementing additional features:
 Your goal is to be a simple, reliable tool for getting real-time cryptocurrency price information through natural language queries.
 """
 
+def extract_symbol(message: str) -> str | None:
+    """
+    Extract a supported token symbol from the user's message.
+
+    Args:
+        message: The message content from which to extract the symbol.
+
+    Returns:
+        The extracted symbol if supported, else None.
+    """
+    match = re.search(r"\b[A-Z]{2,5}\b", message)
+    if match:
+        symbol = match.group(0)
+        if symbol in SYMBOL_TO_ID:
+            return symbol
+    return None
+
+
 def run(env: Environment):
-    # Your agent code here
+    user_msg = env.get_last_message()["content"]
+    symbol = extract_symbol(user_msg)
+    if symbol:
+        try:
+            price = get_price(symbol)
+            if price is not None:
+                # Format the response
+                token_name = SYMBOL_TO_NAME[symbol]
+                reply = f"{token_name} ({symbol})\nCurrent Price: ${price:.2f}"
+                env.add_reply(reply)
+                return
+            else:
+                # CoinGecko returned an error or price is None
+                env.add_reply("Sorry, I couldn't find price data for that token.")
+                return
+        except Exception as e:
+            # Catch any unexpected exceptions to prevent the agent from crashing
+            env.add_reply("Sorry, I couldn't find price data for that token.")
+            return
+    
+    # Fall through to the existing flow
     prompt = {"role": "system", "content": SYSTEM_PROMPT}
     result = env.completion([prompt] + env.list_messages())
     env.add_reply(result)
