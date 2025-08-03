@@ -1,6 +1,5 @@
-import re
 from nearai.agents.environment import Environment
-from coingecko import get_price, SYMBOL_TO_ID, SYMBOL_TO_NAME
+from coingecko import get_price
 
 SYSTEM_PROMPT = """
 # Token Info Agent System Prompt
@@ -82,6 +81,7 @@ If implementing additional features:
 Your goal is to be a simple, reliable tool for getting real-time cryptocurrency price information through natural language queries.
 """
 
+
 def extract_symbol(message: str) -> str | None:
     """
     Extract a supported token symbol from the user's message.
@@ -92,39 +92,28 @@ def extract_symbol(message: str) -> str | None:
     Returns:
         The extracted symbol if supported, else None.
     """
-    match = re.search(r"\b[A-Z]{2,5}\b", message)
-    if match:
-        symbol = match.group(0)
-        if symbol in SYMBOL_TO_ID:
-            return symbol
+    token_names = ["bitcoin", "ethereum", "tether", "solana", "near", "cardano", "polkadot"]
+
+    message = message.lower()
+    for token in token_names:
+        if token in message:
+            return token  # Return the first token that matches
     return None
 
 
 def run(env: Environment):
     user_msg = env.get_last_message()["content"]
-    symbol = extract_symbol(user_msg)
-    if symbol:
-        try:
-            price = get_price(symbol)
-            if price is not None:
-                # Format the response
-                token_name = SYMBOL_TO_NAME[symbol]
-                reply = f"{token_name} ({symbol})\nCurrent Price: ${price:.2f}"
-                env.add_reply(reply)
-                return
-            else:
-                # CoinGecko returned an error or price is None
-                env.add_reply("Sorry, I couldn't find price data for that token.")
-                return
-        except Exception as e:
-            # Catch any unexpected exceptions to prevent the agent from crashing
-            env.add_reply("Sorry, I couldn't find price data for that token.")
-            return
-    
-    # Fall through to the existing flow
-    prompt = {"role": "system", "content": SYSTEM_PROMPT}
-    result = env.completion([prompt] + env.list_messages())
-    env.add_reply(result)
+    token_name = extract_symbol(user_msg)
+
+    if token_name:
+        price = get_price(token_name)
+        if price is not None:
+            reply = f"{token_name.capitalize()} Current Price: ${price:.2f}"
+            env.add_reply(reply)
+        else:
+            env.add_reply(f"Sorry, I couldn't fetch the price for {token_name} right now.")
+    else:
+        env.add_reply("Sorry, I don't recognize that token.")
 
 run(env)
 

@@ -8,45 +8,19 @@ import json
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Symbol to CoinGecko ID mapping for supported tokens
-SYMBOL_TO_ID: dict[str, str] = {
-    "BTC": "bitcoin",
-    "ETH": "ethereum", 
-    "SOL": "solana",
-    "NEAR": "near"
-}
-
-# Symbol to token name mapping for display purposes
-SYMBOL_TO_NAME: dict[str, str] = {
-    "BTC": "Bitcoin",
-    "ETH": "Ethereum", 
-    "SOL": "Solana",
-    "NEAR": "NEAR Protocol"
-}
-
-def get_price(symbol: str) -> float | None:
+def get_price(name: str) -> float | None:
     """
     Fetch the current USD price for a cryptocurrency token.
     
     Args:
-        symbol: Token symbol (e.g., 'BTC', 'ETH', 'SOL', 'NEAR')
+        name: Token name (e.g., 'bitcoin', 'ethereum', 'solana', 'near')
         
     Returns:
         Current USD price as float, or None if error occurred
     """
-    # Convert symbol to uppercase for consistency
-    symbol = symbol.upper()
+    token_name = name.lower()
     
-    # Check if symbol is supported
-    if symbol not in SYMBOL_TO_ID:
-        logger.warning(f"Unsupported token symbol: {symbol}")
-        return None
-    
-    # Get CoinGecko ID for the symbol
-    coingecko_id = SYMBOL_TO_ID[symbol]
-    
-    # Construct API URL
-    url = f"https://api.coingecko.com/api/v3/simple/price?ids={coingecko_id}&vs_currencies=usd"
+    url = f"https://api.coingecko.com/api/v3/simple/price?ids={token_name}&vs_currencies=usd"
     
     try:
         # Make API request
@@ -54,21 +28,21 @@ def get_price(symbol: str) -> float | None:
             data = json.loads(response.read().decode())
             
         # Extract price from response
-        price = data[coingecko_id]["usd"]
+        price = data[token_name]["usd"]
         return float(price)
         
     except HTTPError as e:
-        logger.error(f"HTTP error fetching price for {symbol}: {e}")
+        logger.error(f"HTTP error fetching price for {token_name}: {e}")
         return None
     except URLError as e:
-        logger.error(f"Network error fetching price for {symbol}: {e}")
+        logger.error(f"Network error fetching price for {token_name}: {e}")
         return None
     except KeyError as e:
-        logger.error(f"Unexpected API response structure for {symbol}: {e}")
+        logger.error(f"Unexpected API response structure for {token_name}: {e}")
         return None
     except (ValueError, TypeError) as e:
-        logger.error(f"Error parsing price data for {symbol}: {e}")
+        logger.error(f"Error parsing price data for {token_name}: {e}")
         return None
     except Exception as e:
-        logger.error(f"Unexpected error fetching price for {symbol}: {e}")
+        logger.error(f"Unexpected error fetching price for {token_name}: {e}")
         return None
