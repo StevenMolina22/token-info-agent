@@ -1,6 +1,6 @@
 {
   "name": "token-info-agent",
-  "version": "0.0.4",
+  "version": "0.0.12",
   "description": "The agent can fetch and return real-time token price data based queries",
   "category": "agent",
   "tags": [],
@@ -11,7 +11,8 @@
         "model_provider": "fireworks",
         "model_temperature": 1.0,
         "model_max_tokens": 16384
-      }
+      },
+      "framework": "minimal"
     }
   },
   "show_entry": true

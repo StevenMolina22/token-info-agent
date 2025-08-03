@@ -82,31 +82,12 @@ Your goal is to be a simple, reliable tool for getting real-time cryptocurrency 
 """
 
 
-def extract_symbol(message: str) -> str | None:
-    """
-    Extract a supported token symbol from the user's message.
-
-    Args:
-        message: The message content from which to extract the symbol.
-
-    Returns:
-        The extracted symbol if supported, else None.
-    """
-    token_names = ["bitcoin", "ethereum", "tether", "solana", "near", "cardano", "polkadot"]
-
-    message = message.lower()
-    for token in token_names:
-        if token in message:
-            return token  # Return the first token that matches
-    return None
-
-
 def run(env: Environment):
     user_msg = env.get_last_message()["content"]
 
     relevant_msg_prompt = f"""
     Identify if the user is asking about the price of any token. Respond with 'Yes' if the user is asking about the price. If not, respond with a message telling him that you are here to help him with the price of tokens.
-    user_message = {user_msg}
+    User message: "{user_msg}"
     """
     response = env.completion([{"role": "user", "content": relevant_msg_prompt}])
     if response.strip().lower() != "yes":
