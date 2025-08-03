@@ -1,6 +1,6 @@
 {
   "name": "token-info-agent",
-  "version": "0.0.16",
+  "version": "0.0.18",
   "description": "The agent can fetch and return real-time token price data based queries",
   "category": "agent",
   "tags": [],
