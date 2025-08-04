@@ -1,90 +1,183 @@
+# Token Info Agent - A NEAR Shade Agent
 
-Title: Make a Token Info Agent | NEARN
+A functional autonomous AI agent built on NEAR Protocol using Shade Agents that fetches and returns real-time cryptocurrency token price data based on natural language queries.
 
-URL Source: http://nearn.io/thebafnetwork/2/
+## 🚀 Quick Start
 
+```bash
+# NearAI setup
+pip install nearai  # OR: python3 -m pip install nearai
+nearai login # OR nearai login --remote
 
-This bounty is part of our effort to highlight what's possible with Shade Agents, autonomous, chain-abstracted AI agents built on NEAR using Chain Signatures. These agents can read, reason, and act across ecosystems without centralized control.
+# Run the agent
+nearai registry download arepaehuevo.near/token-info-agent/0.0.19
+cd ~/.nearai/registry/arepaehuevo.near/token-info-agent/0.0.19
+nearai agent interactive . --local # OR: nearai agent interactive $(pwd) --local
 
-Your task is to build a functional Token Info Agent that can fetch and return real-time token price data based on user queries. Just as important, and staying true to our commitment to open-source documentation, you'll create a clear, beginner-friendly tutorial that anyone can follow.
+# publish changes
+nearai registry upload .
 
-## Quick Start
+# Example usage
+"What's the price of SOL?"
+# Output: Solana (SOL) Current Price: $98.45
+```
 
-**Installation:** `uv pip install -r requirements.txt` (only `requests`)
+## 📋 Overview
 
-**Usage example:** 'What's the price of SOL?'
+This Token Info Agent is part of the NEAR Shade Agents ecosystem - autonomous, chain-abstracted AI agents that can read, reason, and act across ecosystems without centralized control. The agent accepts natural language prompts about cryptocurrency prices and returns formatted, real-time price data from the CoinGecko API.
 
-### What You’ll Build
+### What This Agent Does
 
-Your Token Info Shade Agent should be able to:
+- **Natural Language Processing**: Understands various ways users ask about token prices
+- **Real-time Data**: Fetches current prices from CoinGecko API
+- **Autonomous Operation**: Processes queries and returns results without manual intervention
+- **Error Handling**: Gracefully handles API errors and invalid tokens
 
-*   Accept natural language prompts such as:
+## 🏗️ Architecture
 
-“What’s the price of SOL?”
+The project consists of three main components:
 
-“How much is 1 ETH in USD?”
+### 1. `agent.py` - Main Agent Logic
+The core agent that:
+- Processes user messages using NEAR AI environment
+- Uses LLM to parse natural language queries
+- Identifies token names and symbols
+- Formats responses consistently
 
-*   Query a live token pricing API (such as CoinGecko or CoinMarketCap)
+### 2. `coingecko.py` - API Integration
+A helper module that:
+- Handles CoinGecko API requests
+- Implements robust error handling
+- Returns price data or None on failure
 
-*   Return formatted price data to the user
+### 3. `metadata.json` - Agent Configuration
+Defines agent metadata including:
+- Model configuration (Llama v3.1 70B)
+- Framework settings
+- Version and description
 
-(Optional) Add features like:
+## 🛠️ Installation & Setup
 
-*   Currency conversion between tokens or fiat
+### Prerequisites
+- Python 3.8+
+- Internet connection for API calls
 
-*   Prompt parsing for multi-token support
+### Step-by-Step Installation
 
-*   A CLI or basic UI interface to display results
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd token-info-agent
+   ```
 
-*   LLM integration for flexible language processing
+2. **Test the components**
+   ```python
+   # Test the CoinGecko API helper
+   from coingecko import get_price
+   print(get_price('bitcoin'))  # Should return current BTC price
+   ```
 
-### Submission Requirements
+## 🎯 Usage Examples
 
-Your GitHub PR should include a `/token-info-agent/` folder containing:
+The agent supports various natural language queries:
 
-*   `README.md` — A full tutorial: setup, logic, usage, and examples
+### Basic Price Queries
+```
+User: "What's the price of Bitcoin?"
+Agent: Bitcoin (BTC) Current Price: $113,500.00
 
-*   `main.py`, `index.js`, or `lib.rs` — Your agent’s core logic in Python, JavaScript, or Rust
+User: "How much is SOL?"
+Agent: Solana (SOL) Current Price: $161.44
 
-*   `prompt_examples.txt` — At least 3 sample user queries and expected outputs
+User: "Show me the current price of Ethereum"
+Agent: Ethereum (ETH) Current Price: $3,145.30
+```
 
-*   `demo.mp4` or Loom/YouTube link — A short video (2–5 min) walking through the agent’s functionality
+### Symbol Variations
+```
+User: "What's BTC trading at?"
+Agent: Bitcoin (BTC) Current Price: $113,500.00
 
-(Optional) Basic UI wrapper or CLI interface
+User: "ETH price please"
+Agent: Ethereum (ETH) Current Price: $3,145.30
 
-### Technical Requirements
+User: "How much is NEAR worth?"
+Agent: Near (NEAR) Current Price: $3.45
+```
 
-*   Must be built in JavaScript, Python, or Rust
+### Conversational Queries
+```
+User: "Can you tell me the price of Cardano?"
+Agent: Cardano (ADA) Current Price: $0.70
 
-*   Agent must function autonomously (no manual steps after setup)
+User: "I want to know how much Stellar costs"
+Agent: Stellar (XLM) Current Price: $0.85
+```
 
-*   Code must be open source and submitted via GitHub PR
+### Error Handling Strategy
 
-*   Tutorial must be clear, complete, and reproducible
+The agent implements comprehensive error handling:
 
-### Judging Criteria
+1. **API Errors**: Network issues, HTTP errors, malformed responses
+2. **Token Recognition**: Invalid or unsupported tokens
+3. **Data Parsing**: Malformed price data
+4. **User Input**: Non-price related queries
 
-**Clarity & Reproducibility**
+## 🚨 Error Scenarios
 
-Is your tutorial easy to follow and replicate?
+### Invalid Tokens
+```
+User: "How much is INVALIDTOKEN?"
+Agent: Sorry, I couldn't find price data for that token. Please try a supported token like Bitcoin (BTC), Ethereum (ETH), or Solana (SOL).
+```
 
-**Agent Autonomy**
+### Non-Price Queries
+```
+User: "What's the weather like?"
+Agent: I'm here to help you with cryptocurrency token prices. Please ask about a token price, such as "What's the price of Bitcoin?"
+```
 
-Does your agent process prompts and return price data without manual input?
+### API Failures
+```
+User: "What's the price of Bitcoin?"
+Agent: Sorry, I couldn't fetch the price for bitcoin right now.
+```
 
-**Code Quality & Logic**
+## 🧪 Testing
 
-Is your logic well-structured and accurate across test cases?
+### Manual Testing
+Use the examples in `prompt_examples.txt` to test various scenarios
 
-### Resources
+### Supported Tokens
+The agent supports any token available on CoinGecko's API, including:
+- Bitcoin (BTC)
+- Ethereum (ETH)
+- Solana (SOL)
+- Near Protocol (NEAR)
+- Cardano (ADA)
+- Stellar (XLM)
+- And hundreds more...
 
-Everything you need to learn about Shade Agents and how they work:
+## 🔮 Future Enhancements
 
-*   [Intro to Shade Agents – NEAR Docs](https://docs.near.org/ai/shade-agents/introduction)
+Potential improvements for the agent:
 
-*   [NEAR Blog: The First Truly Autonomous AI Agents](https://www.near.org/blog/shade-agents-the-first-truly-autonomous-ai-agents)
+### Core Features
+- **Multi-token queries**: "Compare BTC and ETH prices"
+- **Historical data**: "What was Bitcoin's price yesterday?"
+- **Price alerts**: "Notify me when SOL hits $100"
+- **Currency conversion**: "How much is 1 BTC in EUR?"
 
-*   [Shade Agents Walkthrough Video with Proximity Labs](https://www.youtube.com/watch?v=04NEXdLz9EE)
+## 📚 Resources
 
-*   [CoinGecko API Documentation](https://www.coingecko.com/en/api/documentation)
+### Shade Agents Documentation
+- [Intro to Shade Agents – NEAR Docs](https://docs.near.org/ai/shade-agents/introduction)
+- [NEAR Blog: The First Truly Autonomous AI Agents](https://www.near.org/blog/shade-agents-the-first-truly-autonomous-ai-agents)
 
+### API Documentation
+- [CoinGecko API Documentation](https://www.coingecko.com/en/api/documentation)
+- [CoinGecko Simple Price Endpoint](https://www.coingecko.com/en/api/documentation#operations-simple-get_simple_price)
+
+---
+
+*Built with ❤️ for the NEAR Protocol ecosystem as part of the Shade Agents bounty program.*
