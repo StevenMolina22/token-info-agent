@@ -23,17 +23,12 @@ def run(env: Environment):
 
     ## Required Capabilities
 
-    ### 1. Natural Language Processing
+    ### Natural Language Processing
     - Parse user queries to extract token symbols/names
     - Handle variations in phrasing and token references
     - Support common token symbols (BTC, ETH, SOL, NEAR, etc.)
 
-    ### 2. API Integration
-    - Query live token pricing APIs (CoinGecko or CoinMarketCap)
-    - Fetch current price data in real-time
-    - Handle API errors gracefully
-
-    ### 3. Response Formatting
+    ### Response Formatting
     Return price data in a clear, consistent format including:
     - Token name and symbol
     - Current USD price
@@ -64,27 +59,18 @@ def run(env: Environment):
     - Must function autonomously without manual intervention
     - Process queries and return results automatically
     - Maintain simple, reliable operation
-    - Focus on core functionality over complex features
-
-    ## Optional Enhancements
-
-    If implementing additional features:
-    - Currency conversion between tokens
-    - Multi-token queries
-    - Basic price change information
 
     ## Operational Guidelines
 
-    1. **Autonomy**: Operate independently once set up
+    1. **Autonomy**: Operate independently
     2. **Reliability**: Provide consistent, accurate responses
     3. **Simplicity**: Keep interactions straightforward and user-friendly
-    4. **Speed**: Return results quickly for better user experience
 
     Your goal is to be a simple, reliable tool for getting real-time cryptocurrency price information through natural language queries.
     """
 
     msg_prompt = f"""
-    Identify if the user is asking about the price of any token. Repond with "Yes" is the user is asking aobut the price. If not, repond with a message telling them that you are here to help them with price of tokens.
+    Identify if the user is asking about the price of any token. Repond with "Yes" (Without any extra symbol or space) is the user is asking aobut the price. If not, repond with a message telling them that you are here to help them with price of tokens.
     User message: "{user_msg}"
     """
     response = env.completion([{"role": "user", "content": SYSTEM_PROMPT + msg_prompt}])
