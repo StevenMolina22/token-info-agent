@@ -1,8 +1,6 @@
 from nearai.agents.environment import Environment
 from coingecko import get_price
 
-
-
 def run(env: Environment):
     user_msg = env.get_last_message()["content"]
 
@@ -74,7 +72,6 @@ def run(env: Environment):
     - Currency conversion between tokens
     - Multi-token queries
     - Basic price change information
-    - Simple CLI or UI interface
 
     ## Operational Guidelines
 
@@ -95,18 +92,23 @@ def run(env: Environment):
         env.add_reply(response)
         return
 
-    extraction_prompt = f"""
+    token_name_prompt = f"""
     From the following user message, what is the cryptocurrency they are asking about?
-    Repond with ONLY the name. For example: "bitcoin", "ethereum", "solana", "cardano", "stellar", "tether", "near". 
-
+    For example: "bitcoin", "ethereum", "solana", "cardano", "stellar", "tether", "near".
+    Return exactly the token name and token symbol as a single string in the format: "<token_name> <token_symbol>".
+    Use a single space between the name and symbol. Do not include any additional text, punctuation, or outputs.
+    Example output:
+        - "bitcoin BTC"
+        - "ethereum ETH"
+        - "solana SOL"
     User message: "{user_msg}"
     """
-    response = env.completion([{"role": "user", "content": SYSTEM_PROMPT + extraction_prompt}])
-    token_name = response.strip().lower()
+    response = env.completion([{"role": "user", "content": SYSTEM_PROMPT + token_name_prompt}])
+    token_name, token_symbol = response.split()
     if token_name:
         price = get_price(token_name)
         if price is not None:
-            reply = f"{token_name.capitalize()} Current Price: ${price:.2f}"
+            reply = f"{token_name.capitalize()} ({token_symbol}) Current Price: {price:.2f}"
             env.add_reply(reply)
         else:
             env.add_reply(f"Sorry, I couldn't fetch the price for {token_name} right now.")
@@ -114,4 +116,3 @@ def run(env: Environment):
         env.add_reply("Sorry, I don't recognize that token.")
 
 run(env)
-

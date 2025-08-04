@@ -1,0 +1,41 @@
+Token Info Agent - Sample Queries and Expected Outputs
+
+=== BASIC PRICE QUERIES ===
+
+Query: "What's the price of Bitcoin?"
+Expected: Bitcoin (BTC) Current Price: $43,250.00
+
+Query: "How much is SOL?"
+Expected: Solana (SOL) Current Price: $98.45
+
+Query: "Show me the current price of Ethereum"
+Expected: Ethereum (ETH) Current Price: $2,650.30
+
+=== SYMBOL VARIATIONS ===
+
+Query: "What's BTC trading at?"
+Expected: Bitcoin (BTC) Current Price: $43,250.00
+
+Query: "ETH price please"
+Expected: Ethereum (ETH) Current Price: $2,650.30
+
+Query: "How much is NEAR worth?"
+Expected: Near Protocol (NEAR) Current Price: $3.45
+
+=== CONVERSATIONAL QUERIES ===
+
+Query: "Can you tell me the price of Cardano?"
+Expected: Cardano (ADA) Current Price: $0.45
+
+Query: "I want to know how much Stellar costs"
+Expected: Stellar (XLM) Current Price: $0.85
+
+=== ERROR SCENARIOS ===
+
+Query: "What's the weather like?"
+Expected: I'm here to help you with cryptocurrency token prices. Please ask about a token price, such as "What's the price of Bitcoin?"
+
+Query: "How much is INVALIDTOKEN?"
+Expected: Sorry, I couldn't find price data for that token. Please try a supported token like Bitcoin (BTC), Ethereum (ETH), or Solana (SOL).
+
+Note: Prices are examples and will vary based on real-time market data from CoinGecko API.
